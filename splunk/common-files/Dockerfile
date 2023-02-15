@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG SPLUNK_BASE_IMAGE=base-debian-10
-
+ARG SPLUNK_BASE_IMAGE=redhat-8
+#
 #
 # Download and unpack Splunk Enterprise
 #
@@ -21,12 +21,12 @@ FROM ${SPLUNK_BASE_IMAGE}:latest as package
 ARG SPLUNK_BUILD_URL
 COPY splunk/common-files/make-minimal-exclude.py /tmp
 RUN python /tmp/make-minimal-exclude.py ${SPLUNK_BUILD_URL} > /tmp/splunk-minimal-exclude.list \
-    && echo "Downloading Splunk and validating the checksum at: ${SPLUNK_BUILD_URL}" \
+    && echo "Downloading Splunk at: ${SPLUNK_BUILD_URL}" \
     && wget -qO /tmp/`basename ${SPLUNK_BUILD_URL}` ${SPLUNK_BUILD_URL} \
-    && wget -qO /tmp/splunk.tgz.sha512 ${SPLUNK_BUILD_URL}.sha512 \
+    # && wget -qO /tmp/splunk.tgz.sha512 ${SPLUNK_BUILD_URL}.sha512 \
     && cd /tmp \
-    && echo "$(cat /tmp/splunk.tgz.sha512)" | sha512sum --check  --status \
-    && rm /tmp/splunk.tgz.sha512 \
+    # && echo "$(cat /tmp/splunk.tgz.sha512)" | sha512sum --check  --status \
+    # && rm /tmp/splunk.tgz.sha512 \
     && mkdir -p /minimal/splunk/var /extras/splunk/var \
     && tar -C /minimal/splunk --strip 1 --exclude-from=/tmp/splunk-minimal-exclude.list -zxf /tmp/`basename ${SPLUNK_BUILD_URL}` \
     && tar -C /extras/splunk --strip 1 --wildcards --files-from=/tmp/splunk-minimal-exclude.list -zxf /tmp/`basename ${SPLUNK_BUILD_URL}` \
@@ -49,14 +49,15 @@ ENV TMPETCDIR=${TMPSPLUNKDIR}/etc
 
 # Currently kubernetes only accepts UID and not USER field to
 # start a container as a particular user. So we create Splunk
-# user with pre-determined UID.
-ARG UID=41812
-ARG GID=41812
+# user with pre-determined UID. 
+# Changed UID to 1000 to use it with VSC & WSL
+ARG UID=1000
+ARG GID=1000
 
 # Simple script used to populate/upgrade splunk/etc directory
 COPY [ "splunk/common-files/updateetc.sh", "/sbin/" ]
 
-# Setup users and groups
+# Setup users and groups & some preferred settings
 RUN groupadd -r -g ${GID} ${SPLUNK_GROUP} \
     && useradd -r -m -u ${UID} -g ${GID} -s /bin/bash ${SPLUNK_USER} \
     && chmod 755 /sbin/updateetc.sh
@@ -109,7 +110,7 @@ RUN sed -i -e 's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL\nans
     && chown -R ${ANSIBLE_USER}:${ANSIBLE_GROUP} ${CONTAINER_ARTIFACT_DIR} \
     && chmod -R 775 ${CONTAINER_ARTIFACT_DIR} \
     && chmod -R 555 ${SPLUNK_ANSIBLE_HOME} \
-    && chgrp ${ANSIBLE_GROUP} ${SPLUNK_ANSIBLE_HOME} ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
+    # && chgrp ${ANSIBLE_GROUP} ${SPLUNK_ANSIBLE_HOME} ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
     && chmod 775 ${SPLUNK_ANSIBLE_HOME} \
     && chmod 664 ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
     && chmod 755 /sbin/entrypoint.sh /sbin/createdefaults.py /sbin/checkstate.sh

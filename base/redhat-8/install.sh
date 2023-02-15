@@ -93,11 +93,21 @@ do
   ln -s busybox $item || true
 done
 chmod u+s /bin/ping
-groupadd sudo
+groupadd -g 815 sudo
 
 echo "
 ## Allows people in group sudo to run all commands
 %sudo  ALL=(ALL)       ALL" >> /etc/sudoers
+
+echo "
+## Allow splunk in group sudo to run all commands
+splunk  ALL=NOPASSWD:ALL" >> /etc/sudoers
+
+echo 'alias ll="ls --color -al"' >> /etc/bashrc
+echo 'alias cs="clear;ls -lsh"' >> /etc/bashrc
+echo 'alias ..="cd .."' >> /etc/bashrc
+echo 'alias ...="cd ../.."' >> /etc/bashrc
+echo 'alias splunk=/opt/splunk/bin/splunk' >> /etc/bashrc
 
 # Clean
 microdnf clean all
