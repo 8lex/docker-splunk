@@ -10,11 +10,15 @@ Red Hat images will continue to be published.
 
 ## Navigation
 
+* [9.0.5](#905)
+* [9.0.4.1](#9041)
 * [9.0.4](#904)
 * [9.0.2](#902)
 * [9.0.1](#901)
 * [9.0.0.1](#9001)
 * [9.0.0](#900)
+* [8.2.11](#8211)
+* [8.2.10](#8210)
 * [8.2.9](#829)
 * [8.2.8](#828)
 * [8.2.7](#827)
@@ -27,6 +31,8 @@ Red Hat images will continue to be published.
 * [8.2.2](#822)
 * [8.2.1](#821)
 * [8.2.0](#820)
+* [8.1.14](#8114)
+* [8.1.13](#8113)
 * [8.1.12](#8112)
 * [8.1.11](#8111)
 * [8.1.10](#8110)
@@ -79,6 +85,34 @@ Red Hat images will continue to be published.
 * [7.2.2](#722)
 * [7.2.1](#721)
 * [7.2.0](#720)
+
+## 9.0.5
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 9.0.5](https://docs.splunk.com/Documentation/Splunk/9.0.5/ReleaseNotes/Fixedissues#Splunk_Enterprise_9.0.5)
+* DISCONTINUE SCLOUD support. SCLOUD can be fetched and installed using provisions. [SCLOUD can be found here.](https://github.com/splunk/splunk-cloud-sdk-go)
+
+#### splunk-ansible changes:
+* Bugfixes
+* Increase timeout for Splunk process to be up and running
+
+---
+
+## 9.0.4.1
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 9.0.4.1](https://docs.splunk.com/Documentation/Splunk/9.0.4/ReleaseNotes/Fixedissues#Splunk_Enterprise_9.0.4.1)
+
+#### splunk-ansible changes:
+* Bugfixes
+
+---
 
 ## 9.0.4
 
@@ -147,6 +181,25 @@ Red Hat images will continue to be published.
 * Patch support for new major Splunk release
 * Documentation updates + bugfixes
 
+---
+
+## 8.2.11
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 8.2.11](https://docs.splunk.com/Documentation/Splunk/8.2.11/ReleaseNotes/Fixedissues)
+
+---
+
+## 8.2.10
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 8.2.10](https://docs.splunk.com/Documentation/Splunk/8.2.10/ReleaseNotes/Fixedissues)
 ---
 
 ## 8.2.9
@@ -297,6 +350,26 @@ Red Hat images will continue to be published.
 * Added support for setting `clientName` in `deploymentclient.conf`
     * `splunk.deployment_client.name` in `default.yml`
     * `SPLUNK_DEPLOYMENT_CLIENT_NAME` environment variable
+
+---
+
+## 8.1.14
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 8.1.14](https://docs.splunk.com/Documentation/Splunk/8.1.14/ReleaseNotes/Fixedissues)
+
+---
+
+## 8.1.13
+
+#### What's New?
+* Releasing new images to support Splunk Enterprise release.
+
+#### docker-splunk changes:
+* Bumping Splunk version. For details, see [Fixed issues for 8.1.13](https://docs.splunk.com/Documentation/Splunk/8.1.13/ReleaseNotes/Fixedissues)
 
 ---
 
