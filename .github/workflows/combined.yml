@@ -8,6 +8,26 @@ on:
       - '**' 
 
 jobs:
+  debug_action:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Debug Info
+      run: |
+        echo "Before if statement"
+        echo "Event name: ${{ github.event_name }}"
+        echo "Event paths: ${{ github.event.paths }}"
+        echo "Ref: ${{ github.event.ref }}"
+        if [[ ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') && contains(github.event.paths, 'base/') }} ]]; then
+          echo "Condition for base_image is true"
+        else
+          echo "Condition for base_image is false"
+        fi
+        if [[ ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') && contains(github.event.paths, 'splunk/common-files/') }} ]]; then
+          echo "Condition for splunk_image is true"
+        else
+          echo "Condition for splunk_image is false"
+        fi
+        echo "After if statements"
   base_image:
     runs-on: ubuntu-latest
     if: contains(github.event.paths, 'base/')
