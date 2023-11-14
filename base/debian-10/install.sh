@@ -89,6 +89,12 @@ do
 done
 chmod u+s /bin/ping
 
+echo 'alias ll="ls --color -al"' >> /etc/bashrc
+echo 'alias cs="clear;ls -lsh"' >> /etc/bashrc
+echo 'alias ..="cd .."' >> /etc/bashrc
+echo 'alias ...="cd ../.."' >> /etc/bashrc
+echo 'alias splunk=/opt/splunk/bin/splunk' >> /etc/bashrc
+
 # Clean
 apt clean autoclean
 rm -rf /var/lib/apt/lists/*

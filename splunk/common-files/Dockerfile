@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG SPLUNK_BASE_IMAGE=redhat-8
+ARG SPLUNK_BASE_IMAGE=base-debian-10
 #
 #
 # Download and unpack Splunk Enterprise
@@ -23,10 +23,10 @@ COPY splunk/common-files/make-minimal-exclude.py /tmp
 RUN python /tmp/make-minimal-exclude.py ${SPLUNK_BUILD_URL} > /tmp/splunk-minimal-exclude.list \
     && echo "Downloading Splunk at: ${SPLUNK_BUILD_URL}" \
     && wget -qO /tmp/`basename ${SPLUNK_BUILD_URL}` ${SPLUNK_BUILD_URL} \
-    # && wget -qO /tmp/splunk.tgz.sha512 ${SPLUNK_BUILD_URL}.sha512 \
+    && wget -qO /tmp/splunk.tgz.sha512 ${SPLUNK_BUILD_URL}.sha512 \
     && cd /tmp \
-    # && echo "$(cat /tmp/splunk.tgz.sha512)" | sha512sum --check  --status \
-    # && rm /tmp/splunk.tgz.sha512 \
+    && echo "$(cat /tmp/splunk.tgz.sha512)" | sha512sum --check  --status \
+    && rm /tmp/splunk.tgz.sha512 \
     && mkdir -p /minimal/splunk/var /extras/splunk/var \
     && tar -C /minimal/splunk --strip 1 --exclude-from=/tmp/splunk-minimal-exclude.list -zxf /tmp/`basename ${SPLUNK_BUILD_URL}` \
     && tar -C /extras/splunk --strip 1 --wildcards --files-from=/tmp/splunk-minimal-exclude.list -zxf /tmp/`basename ${SPLUNK_BUILD_URL}` \
@@ -110,7 +110,7 @@ RUN sed -i -e 's/%sudo\s\+ALL=(ALL\(:ALL\)\?)\s\+ALL/%sudo ALL=NOPASSWD:ALL\nans
     && chown -R ${ANSIBLE_USER}:${ANSIBLE_GROUP} ${CONTAINER_ARTIFACT_DIR} \
     && chmod -R 775 ${CONTAINER_ARTIFACT_DIR} \
     && chmod -R 555 ${SPLUNK_ANSIBLE_HOME} \
-    # && chgrp ${ANSIBLE_GROUP} ${SPLUNK_ANSIBLE_HOME} ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
+    && chgrp ${ANSIBLE_GROUP} ${SPLUNK_ANSIBLE_HOME} ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
     && chmod 775 ${SPLUNK_ANSIBLE_HOME} \
     && chmod 664 ${SPLUNK_ANSIBLE_HOME}/ansible.cfg \
     && chmod 755 /sbin/entrypoint.sh /sbin/createdefaults.py /sbin/checkstate.sh
