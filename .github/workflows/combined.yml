@@ -42,7 +42,7 @@ jobs:
   
   splunk_image:
     runs-on: ubuntu-latest
-    if: contains(github.event.paths, 'splunk/common-files/*')
+    if: contains(github.event.paths, 'splunk/common-files/')
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
