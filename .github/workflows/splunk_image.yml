@@ -55,7 +55,7 @@ jobs:
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_image_version) 
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_splunk_version) .
 
-      - name: push splunk image to docker
-        run: |
-          docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)
-          docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501
+      - name: push splunk uid 1000
+        run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)
+      - name: push splunk uid 501
+        run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501
