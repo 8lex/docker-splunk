@@ -12,7 +12,7 @@ on:
       # Push events on main branch
       - develop
     paths:
-      - base/redhat-8/*
+      - base/debian-*/*
 
 jobs:
   makefile:
