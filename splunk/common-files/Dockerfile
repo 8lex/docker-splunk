@@ -51,8 +51,8 @@ ENV TMPETCDIR=${TMPSPLUNKDIR}/etc
 # start a container as a particular user. So we create Splunk
 # user with pre-determined UID. 
 # Changed UID to 1000 to use it with VSC & WSL
-ARG UID=1000
-ARG GID=1000
+ARG UID=501
+ARG GID=501
 
 # Simple script used to populate/upgrade splunk/etc directory
 COPY [ "splunk/common-files/updateetc.sh", "/sbin/" ]
