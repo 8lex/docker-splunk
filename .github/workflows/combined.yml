@@ -10,12 +10,7 @@ on:
 jobs:
   base_image:
     runs-on: ubuntu-latest
-    # if: |
-    #   contains(github.event_name, 'push') &&
-    #   (
-    #     startsWith(github.event.ref, 'refs/heads/develop') &&
-    #     (contains(github.event.paths, 'base/') || contains(github.event.paths, 'splunk/common-files/'))
-    #   )
+    if:  github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') && contains(github.event.paths, 'base/')
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -47,12 +42,7 @@ jobs:
   
   splunk_image:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event_name, 'push') &&
-      (
-        startsWith(github.event.ref, 'refs/heads/develop') &&
-        contains(github.event.paths, 'splunk/common-files/')
-      )
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/develop') && contains(github.event.paths, 'splunk/common-files/')
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
