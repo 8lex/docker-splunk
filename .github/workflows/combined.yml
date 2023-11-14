@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     paths:
-      - '**' 
+      - '**/*' 
 
 jobs:
   debug_action:
