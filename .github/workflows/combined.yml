@@ -1,0 +1,90 @@
+name: Combined Workflow
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**'  # Monitor alle Änderungen im Repository
+
+jobs:
+  base_image:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event_name, 'push') &&
+      (
+        startsWith(github.event.ref, 'refs/heads/develop') &&
+        (contains(github.event.paths, 'base/') || contains(github.event.paths, 'splunk/common-files/'))
+      )
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: set some envs
+        run: |
+          echo $(grep "SPLUNK_VERSION " Makefile | cut -d " " -f3) > tag_splunk_version
+          echo $(grep "SCLOUD_URL " Makefile | cut -d " " -f3) > tag_scloud_url
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build base image
+        run: |
+          docker build \
+          --build-arg SCLOUD_URL=$(cat tag_scloud_url) \
+          --label version=$(cat tag_splunk_version) \
+          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8:latest \
+          ./base/redhat-8
+
+      - name: push splunk image to docker
+        # uses: docker/build-push-action@v2
+        run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8
+  
+  splunk_image:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event_name, 'push') &&
+      (
+        startsWith(github.event.ref, 'refs/heads/develop') &&
+        contains(github.event.paths, 'splunk/common-files/')
+      )
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Check out splunk-ansible
+        uses: actions/checkout@v2
+        with:
+          repository: splunk/splunk-ansible
+          path: splunk-ansible 
+      - name: set env files ;)
+        run: |
+          echo $(grep "SPLUNK_VERSION " Makefile | cut -d " " -f3) > tag_splunk_version
+          echo $(grep "SPLUNK_BUILD " Makefile | cut -d " " -f3) > tag_splunk_build
+          echo $(grep "SPLUNK_PRODUCT " Makefile | cut -d " " -f3) > tag_splunk_product
+          echo $(grep "IMAGE_VERSION ?" Makefile | cut -d " " -f3 | cut -d "\"" -f2) > tag_image_version
+          echo $(grep "SPLUNK_LINUX_BUILD_URL ?=" Makefile | cut -d " " -f3| cut -d "$" -f1) > tag_splunk_url_domain
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build splunk image
+        run: docker build --file splunk/common-files/Dockerfile
+          --platform=linux/amd64
+          --build-arg SPLUNK_BASE_IMAGE=8lex/redhat-8 
+          --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz 
+          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product):$(cat tag_image_version) 
+          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product):$(cat tag_splunk_version) .
+
+      - name: push splunk image to docker
+        run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)
