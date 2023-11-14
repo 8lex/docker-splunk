@@ -23,3 +23,4 @@ ENV SCLOUD_URL=${SCLOUD_URL} \
 
 COPY install.sh /install.sh
 RUN /install.sh && rm -rf /install.sh
+#
