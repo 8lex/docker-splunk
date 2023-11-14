@@ -51,7 +51,6 @@ ENV TMPETCDIR=${TMPSPLUNKDIR}/etc
 # start a container as a particular user. So we create Splunk
 # user with pre-determined UID. 
 # Changed UID to 1000 to use it with the first user on the system
-# 501 <- first mac user on the system
 ARG UID=1000
 ARG GID=1000
 

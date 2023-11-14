@@ -50,7 +50,8 @@ jobs:
         run: docker build --file splunk/common-files/Dockerfile
           --platform=linux/amd64
           --build-arg SPLUNK_BASE_IMAGE=kruj0/redhat-8 
-          --build-arg UID=501 --build-arg GID=501
+          --build-arg UID=501 
+          --build-arg GID=501
           --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz 
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_image_version) 
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_splunk_version) .
