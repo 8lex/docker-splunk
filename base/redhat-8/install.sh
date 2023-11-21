@@ -101,6 +101,7 @@ echo "
 splunk  ALL=NOPASSWD:ALL" >> /etc/sudoers
 #
 # customization
+
 groupdel 20
 echo 'alias ll="ls --color -al"' >> /etc/bashrc
 echo 'alias cs="clear;ls -lsh"' >> /etc/bashrc
