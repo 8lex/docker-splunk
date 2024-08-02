@@ -1,16 +1,17 @@
-name: latest splunk image
+name: splunk_image
 
 on:
   push:
-    branches:    
+    branches:
       - develop
     paths:
       - Makefile
-      - splunk/common-files/*
+      - splunk/common-files/**
+  workflow_dispatch: # Allows the workflow to be manually triggered
 
 jobs:
-  splunk_image:
-    name: splunk_image
+  build_splunk_image:
+    name: Build Splunk Image
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -24,7 +25,7 @@ jobs:
           repository: splunk/splunk-ansible
           path: splunk-ansible
 
-      - name: set env files ;)
+      - name: Set environment variables
         run: |
           echo $(grep "SPLUNK_VERSION " Makefile | cut -d " " -f3) > tag_splunk_version
           echo $(grep "SPLUNK_BUILD " Makefile | cut -d " " -f3) > tag_splunk_build
@@ -37,28 +38,31 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      
+
       - name: Build splunk image uid 1000
-        run: docker build --file splunk/common-files/Dockerfile
-          --platform=linux/amd64
-          --build-arg SPLUNK_BASE_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8
-          --build-arg UID=1000 
-          --build-arg GID=1000
-          --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz 
-          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product):$(cat tag_image_version) 
+        run: |
+          docker build --file splunk/common-files/Dockerfile \
+          --platform=linux/amd64 \
+          --build-arg SPLUNK_BASE_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8 \
+          --build-arg UID=1000 \
+          --build-arg GID=1000 \
+          --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz \
+          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product):$(cat tag_image_version) \
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product):$(cat tag_splunk_version) .
 
       - name: Build splunk image uid 501
-        run: docker build --file splunk/common-files/Dockerfile
-          --platform=linux/amd64
-          --build-arg SPLUNK_BASE_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8 
-          --build-arg UID=501 
-          --build-arg GID=20
-          --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz 
-          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_image_version) 
+        run: |
+          docker build --file splunk/common-files/Dockerfile \
+          --platform=linux/amd64 \
+          --build-arg SPLUNK_BASE_IMAGE=${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8 \
+          --build-arg UID=501 \
+          --build-arg GID=20 \
+          --build-arg SPLUNK_BUILD_URL=$(cat tag_splunk_url_domain)$(cat tag_splunk_product)/releases/$(cat tag_splunk_version)/linux/$(cat tag_splunk_product)-$(cat tag_splunk_version)-$(cat tag_splunk_build)-Linux-x86_64.tgz \
+          --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_image_version) \
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501:$(cat tag_splunk_version) .
 
-      - name: push splunk uid 1000
+      - name: Push splunk image uid 1000
         run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)
-      - name: push splunk uid 501
+
+      - name: Push splunk image uid 501
         run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/$(cat tag_splunk_product)501

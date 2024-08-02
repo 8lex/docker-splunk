@@ -1,22 +1,15 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: base_image
 
 on:
   push:
-  # Sequence of patterns matched against refs/heads
-    branches:    
-      # Push events on main branch
+    branches:
       - develop
     paths:
-      - base/redhat-8/*
+      - base/redhat-8/**
 
 jobs:
-  makefile:
-    name: base_image
+  build_base_image:
+    name: Build Base Image
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -24,7 +17,7 @@ jobs:
         with:
           submodules: true
 
-      - name: set some envs
+      - name: Set environment variables
         run: |
           echo $(grep "SPLUNK_VERSION " Makefile | cut -d " " -f3) > tag_splunk_version
           echo $(grep "SCLOUD_URL " Makefile | cut -d " " -f3) > tag_scloud_url
@@ -43,6 +36,14 @@ jobs:
           --tag ${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8:latest \
           ./base/redhat-8
 
-      - name: push splunk image to docker
-        # uses: docker/build-push-action@v2
+      - name: Push base image to Docker Hub
         run: docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/redhat-8
+
+      - name: Trigger splunk_image workflow
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/actions/workflows/splunk_image.yml/dispatches \
+          -d '{"ref":"develop"}'
