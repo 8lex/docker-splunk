@@ -1,4 +1,5 @@
 .vscode/
+*splunk.lic
 splunk-ansible
 *.idea
 *.DS_Store
