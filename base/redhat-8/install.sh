@@ -29,7 +29,7 @@ export LANG=en_US.utf8
 # Install utility packages
 microdnf -y --nodocs install wget sudo shadow-utils procps tar make gcc \
                              openssl-devel bzip2-devel libffi-devel findutils \
-                             libssh-devel libcurl-devel glib2-devel ncurses-devel \
+                             libssh-devel libcurl-devel ncurses-devel \
                              diffutils bzip2
 # Patch security updates
 microdnf -y --nodocs update gnutls kernel-headers libdnf librepo libnghttp2 nettle \
@@ -78,7 +78,7 @@ ln -sf /usr/bin/pip${PY_SHORT} /usr/bin/pip3
 # Install splunk-ansible dependencies
 cd /
 /usr/bin/python3.9 -m pip install --upgrade pip
-pip -q --no-cache-dir install --upgrade "requests_unixsocket<2.29" "requests<2.29" six wheel Mako "urllib3<2.0.0" certifi jmespath future avro cryptography lxml protobuf setuptools ansible
+pip -q --no-cache-dir install --upgrade requests_unixsocket requests six wheel Mako "urllib3<2.0.0" certifi jmespath future avro cryptography lxml protobuf setuptools ansible
 
 # Remove tests packaged in python libs
 find /usr/lib/ -depth \( -type d -a -not -wholename '*/ansible/plugins/test' -a \( -name test -o -name tests -o -name idle_test \) \) -exec rm -rf '{}' \;
@@ -87,7 +87,7 @@ find /usr/lib/ -depth \( -type f -a -name 'wininst-*.exe' \) -exec rm -rf '{}' \
 ldconfig
 
 # Cleanup
-microdnf remove -y make gcc openssl-devel bzip2-devel findutils glib2-devel glibc-devel cpp binutils \
+microdnf remove -y make gcc openssl-devel bzip2-devel findutils glibc-devel cpp binutils \
                    keyutils-libs-devel krb5-devel libcom_err-devel libffi-devel libcurl-devel \
                    libselinux-devel libsepol-devel libssh-devel libverto-devel libxcrypt-devel \
                    ncurses-devel pcre2-devel zlib-devel diffutils bzip2
