@@ -29,7 +29,7 @@ export LANG=en_US.utf8
 # Install utility packages
 microdnf -y --nodocs install wget sudo shadow-utils procps tar make gcc \
                              openssl-devel libffi-devel findutils libssh-devel \
-                             libcurl-devel ncurses-devel diffutils
+                             libcurl-devel ncurses-devel diffutils zlib-devel
 # Patch security updates
 microdnf -y --nodocs update gnutls kernel-headers libdnf librepo libnghttp2 nettle \
                             libpwquality libxml2 systemd-libs lz4-libs curl \
