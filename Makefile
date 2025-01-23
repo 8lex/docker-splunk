@@ -77,6 +77,9 @@ base-redhat-8:
 base-redhat-8-armv8:
 	docker buildx build ${DOCKER_BUILD_FLAGS} --build-arg BUSYBOX_URL=${BUSYBOX_URL} --label version=${SPLUNK_VERSION} -t base-redhat-8-armv8:${IMAGE_VERSION} ./base/redhat-8
 
+base-redhat-9:
+	docker build ${DOCKER_BUILD_FLAGS} --label version=${SPLUNK_VERSION} -t base-redhat-9:${IMAGE_VERSION} ./base/redhat-9
+
 base-windows-2016:
 	docker build ${DOCKER_BUILD_FLAGS} -t base-windows-2016:${IMAGE_VERSION} ./base/windows-2016
 
@@ -157,7 +160,7 @@ bare-redhat-8: base-redhat-8
 		--target bare -t bare-redhat-8:${IMAGE_VERSION} .
 
 ##### Splunk images #####
-splunk: ansible splunk-debian-9 splunk-debian-10 splunk-centos-7 splunk-centos-8 splunk-redhat-8
+splunk: ansible splunk-debian-9 splunk-debian-10 splunk-centos-7 splunk-centos-8 splunk-redhat-8 splunk-redhat-9
 
 splunk-debian-9: base-debian-9 ansible
 	docker build ${DOCKER_BUILD_FLAGS} \
@@ -194,6 +197,13 @@ splunk-redhat-8: base-redhat-8 ansible
 		--build-arg SPLUNK_BUILD_URL=${SPLUNK_LINUX_BUILD_URL} \
 		-t splunk-redhat-8:${IMAGE_VERSION} .
 
+splunk-redhat-9: base-redhat-9 ansible
+	docker build ${DOCKER_BUILD_FLAGS} \
+		-f splunk/common-files/Dockerfile \
+		--build-arg SPLUNK_BASE_IMAGE=base-redhat-9 \
+		--build-arg SPLUNK_BUILD_URL=${SPLUNK_LINUX_BUILD_URL} \
+		-t splunk-redhat-9:${IMAGE_VERSION} .
+
 splunk-windows-2016: base-windows-2016 ansible
 	docker build ${DOCKER_BUILD_FLAGS} \
 		-f splunk/windows-2016/Dockerfile \
@@ -202,7 +212,7 @@ splunk-windows-2016: base-windows-2016 ansible
 		-t splunk-windows-2016:${IMAGE_VERSION} .
 
 ##### UF images #####
-uf: ansible uf-debian-9 uf-debian-10 uf-centos-7 uf-centos-8 uf-redhat-8
+uf: ansible uf-debian-9 uf-debian-10 uf-centos-7 uf-centos-8 uf-redhat-8 uf-redhat-9
 
 ufbare-debian-9: base-debian-9 ansible
 	docker build ${DOCKER_BUILD_FLAGS} \
@@ -260,6 +270,12 @@ uf-redhat-8-armv8: base-redhat-8-armv8 ansible
 		--build-arg SPLUNK_BUILD_URL=${UF_LINUX_BUILD_URL} \
 		-t uf-redhat-8-armv8:${IMAGE_VERSION} .
 
+uf-redhat-9: base-redhat-9 ansible
+	docker build ${DOCKER_BUILD_FLAGS} \
+		-f uf/common-files/Dockerfile \
+		--build-arg SPLUNK_BASE_IMAGE=base-redhat-9 \
+		--build-arg SPLUNK_BUILD_URL=${UF_LINUX_BUILD_URL} \
+		-t uf-redhat-9:${IMAGE_VERSION} .
 
 uf-windows-2016: base-windows-2016 ansible
 	docker build ${DOCKER_BUILD_FLAGS} \
